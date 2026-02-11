@@ -15,3 +15,9 @@ Ein mächtiger Telegram Admin-Bot mit Web-Dashboard.
 2. Token und Admin ID eintragen.
 3. `pip install -r requirements.txt`
 4. Starten!
+
+## ☕ Unterstützung
+
+Gefällt dir NEW BRAIN? Dann spendier mir doch einen Kaffee!
+
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/kodimanhimself)

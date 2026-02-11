@@ -1,0 +1,14 @@
+0~# Geheime Konfiguration
+config.json
+
+# Datenbanken und Logs (Userdaten!)
+banned_log.json
+cmd_log.json
+known_users.json
+warnings.json
+
+# Python Systemdateien (Müll)
+__pycache__/
+*.pyc
+venv/
+.DS_Store

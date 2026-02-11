@@ -1,0 +1,233 @@
+# ---------------------------------------------------------
+# NEW BRAIN BOT - V5 (STRIKE SYSTEM)
+# Created by: Kodiman_Himself
+# ---------------------------------------------------------
+
+import logging
+import json
+import asyncio
+import os
+from datetime import datetime
+from telegram import Update
+from telegram.ext import Application, MessageHandler, filters, ContextTypes
+
+# Logging
+logging.basicConfig(
+    format='%(asctime)s - NEW BRAIN V5 - %(levelname)s - %(message)s',
+    level=logging.INFO
+)
+logger = logging.getLogger(__name__)
+
+# Pfade
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+CONFIG_FILE = os.path.join(BASE_DIR, 'config.json')
+BAN_LOG_FILE = os.path.join(BASE_DIR, 'banned_log.json')
+CMD_LOG_FILE = os.path.join(BASE_DIR, 'cmd_log.json')
+USER_DB_FILE = os.path.join(BASE_DIR, 'known_users.json')
+WARN_DB_FILE = os.path.join(BASE_DIR, 'warnings.json')
+
+# --- HELPER ---
+
+def load_json(file_path):
+    if os.path.exists(file_path):
+        try:
+            with open(file_path, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except: return {} if "users" in file_path or "warnings" in file_path else []
+    return {} if "users" in file_path or "warnings" in file_path else []
+
+def save_json(file_path, data):
+    with open(file_path, 'w', encoding='utf-8') as f:
+        json.dump(data, f, indent=4)
+
+def update_known_user(user):
+    users = load_json(USER_DB_FILE)
+    user_label = f"{user.first_name}"
+    if user.last_name: user_label += f" {user.last_name}"
+    if user.username: user_label += f" (@{user.username})"
+    users[str(user.id)] = user_label
+    save_json(USER_DB_FILE, users)
+
+def add_warning(user_id):
+    """Fügt einen Strike hinzu und gibt die neue Anzahl zurück"""
+    warns = load_json(WARN_DB_FILE)
+    uid = str(user_id)
+    current = warns.get(uid, 0)
+    warns[uid] = current + 1
+    save_json(WARN_DB_FILE, warns)
+    return warns[uid]
+
+def reset_warnings(user_id):
+    warns = load_json(WARN_DB_FILE)
+    uid = str(user_id)
+    if uid in warns:
+        del warns[uid]
+        save_json(WARN_DB_FILE, warns)
+
+def log_ban(user_id, user_name, chat_id, chat_title, reason):
+    entry = {
+        "user_id": user_id, "user_name": user_name,
+        "chat_id": chat_id, "chat_title": chat_title,
+        "reason": reason, "timestamp": datetime.now().strftime("%d.%m.%Y %H:%M:%S")
+    }
+    logs = load_json(BAN_LOG_FILE)
+    if isinstance(logs, dict): logs = []
+    logs.insert(0, entry)
+    save_json(BAN_LOG_FILE, logs)
+
+def log_command_id(chat_id, message_id):
+    entry = {"chat_id": chat_id, "message_id": message_id}
+    logs = load_json(CMD_LOG_FILE)
+    if isinstance(logs, dict): logs = []
+    logs.append(entry)
+    save_json(CMD_LOG_FILE, logs)
+
+async def delete_later(message, delay):
+    if not message: return
+    try:
+        await asyncio.sleep(delay)
+        await message.delete()
+    except: pass
+
+# --- LOGIC ---
+
+async def handle_dynamic_commands(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if not update.message or not update.message.text: return
+    text = update.message.text
+    if not text.startswith('/'): return
+    
+    user = update.effective_user
+    chat = update.effective_chat
+    config = load_json(CONFIG_FILE)
+    
+    update_known_user(user)
+    log_command_id(chat.id, update.message.message_id)
+
+    timer = config.get('delete_timer', 300)
+    asyncio.create_task(delete_later(update.message, timer))
+
+    raw_command = text.split()[0] 
+    command_clean = raw_command[1:]
+    if '@' in command_clean:
+        command_clean = command_clean.split('@')[0]
+    
+    command_trigger = command_clean.lower()
+    admin_id_str = str(config.get("admin_id", ""))
+    
+    if command_trigger == "id":
+        if update.message.reply_to_message:
+            target = update.message.reply_to_message.from_user
+            msg = await update.message.reply_text(f"👤 User: {target.first_name}\n🆔 ID: `{target.id}`", parse_mode='Markdown')
+        else:
+            msg = await update.message.reply_text(f"Deine ID: `{user.id}`\nGruppe ID: `{chat.id}`", parse_mode='Markdown')
+        log_command_id(chat.id, msg.message_id)
+        asyncio.create_task(delete_later(msg, 30))
+        return
+
+    if command_trigger == "ban":
+        if str(user.id) != admin_id_str: return
+        if update.message.reply_to_message:
+            target_msg = update.message.reply_to_message
+            target_user = target_msg.from_user
+            try:
+                try: await target_msg.delete()
+                except: pass
+                await chat.ban_member(target_user.id, revoke_messages=True)
+                
+                succ_msg = await update.message.reply_text(f"🔨 {target_user.first_name} wurde gebannt!")
+                log_ban(target_user.id, target_user.first_name, chat.id, chat.title, "Admin Befehl /ban")
+                asyncio.create_task(delete_later(succ_msg, 10))
+
+                if admin_id_str:
+                    try: await context.bot.send_message(chat_id=admin_id_str, text=f"🚨 **MANUELLER BANN**\nAdmin: {user.first_name}\nOpfer: {target_user.first_name}", parse_mode='Markdown')
+                    except: pass
+            except Exception as e:
+                err_msg = await update.message.reply_text(f"Fehler: {e}")
+                asyncio.create_task(delete_later(err_msg, 10))
+        return
+
+    commands_dict = config.get('commands', {})
+    if command_trigger in commands_dict:
+        bot_reply = await update.message.reply_text(commands_dict[command_trigger])
+        log_command_id(chat.id, bot_reply.message_id)
+        asyncio.create_task(delete_later(bot_reply, timer))
+
+async def welcome_new_member(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    config = load_json(CONFIG_FILE)
+    if config.get("active_chat_id") != update.effective_chat.id:
+        config["active_chat_id"] = update.effective_chat.id
+        config["active_chat_title"] = update.effective_chat.title
+        save_json(CONFIG_FILE, config)
+
+    for member in update.message.new_chat_members:
+        if member.id == context.bot.id: continue
+        update_known_user(member)
+        msg_text = config.get('welcome_message', 'Willkommen.')
+        sent = await update.message.reply_text(f"👋 Hallo {member.first_name}!\n\n{msg_text}")
+        timer = config.get('welcome_timer', 300)
+        asyncio.create_task(delete_later(sent, timer))
+
+async def monitor_chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if not update.message or not update.message.text: return
+    if update.message.text.startswith('/'): return
+    
+    user = update.effective_user
+    chat = update.effective_chat
+    update_known_user(user)
+    
+    config = load_json(CONFIG_FILE)
+    if config.get("active_chat_id") != chat.id:
+        config["active_chat_id"] = chat.id
+        config["active_chat_title"] = chat.title
+        save_json(CONFIG_FILE, config)
+
+    banned_words = config.get('banned_words', [])
+    # Max Strikes aus Config laden (Standard: 1 = Sofort Bann)
+    max_strikes = config.get('max_strikes', 1) 
+    text = update.message.text.lower()
+    
+    for word in banned_words:
+        if word in text:
+            try:
+                # 1. Die böse Nachricht IMMER löschen
+                await update.message.delete()
+                
+                # 2. Strike hinzufügen
+                strikes = add_warning(user.id)
+                
+                # 3. Entscheiden: Verwarnen oder Bannen?
+                if strikes >= max_strikes:
+                    # BANNEN
+                    await chat.ban_member(user.id, revoke_messages=True)
+                    log_ban(user.id, user.first_name, chat.id, chat.title, f"{word} (Strike {strikes}/{max_strikes})")
+                    reset_warnings(user.id) # Reset nach Bann
+                    
+                    ban_msg = await chat.send_message(f"⛔ {user.first_name} wurde gebannt! (Grund: {word})")
+                    asyncio.create_task(delete_later(ban_msg, 60))
+                    
+                    # Admin Info
+                    admin_id = config.get('admin_id')
+                    if admin_id:
+                        try: await context.bot.send_message(chat_id=admin_id, text=f"🚨 **BANN (Limit erreicht)**\nUser: {user.first_name}\nWort: {word}\nStrikes: {strikes}", parse_mode='Markdown')
+                        except: pass
+                else:
+                    # VERWARNEN
+                    warn_msg = await chat.send_message(f"⚠️ {user.first_name}, das Wort '{word}' ist verboten! Dies ist Verwarnung {strikes} von {max_strikes}.")
+                    asyncio.create_task(delete_later(warn_msg, 30))
+                
+                break
+            except Exception as e:
+                logger.error(f"Ban/Warn Error: {e}")
+
+def main():
+    config = load_json(CONFIG_FILE)
+    token = config.get('bot_token')
+    if not token: return
+    app = Application.builder().token(token).build()
+    app.add_handler(MessageHandler(filters.StatusUpdate.NEW_CHAT_MEMBERS, welcome_new_member))
+    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, monitor_chat))
+    app.add_handler(MessageHandler(filters.COMMAND, handle_dynamic_commands))
+    app.run_polling()
+
+if __name__ == '__main__':
+    main()

@@ -1,12 +1,13 @@
 {
-    "admin_id": "DEINE_ADMIN_ID",
-    "welcome_message": "Willkommen!",
-    "banned_words": [],
-    "commands": {},
-    "bot_token": "DEIN_TOKEN_HIER",
-    "delete_timer": 300,
-    "welcome_timer": 300,
+    "bot_token": "HIER_DEINEN_TOKEN_EINFUEGEN",
+    "admin_id": "HIER_DEINE_ID_EINFUEGEN",
     "active_chat_id": "",
     "active_chat_title": "",
-    "max_strikes": 1
+    "welcome_message": "Willkommen im Chat!",
+    "welcome_timer": 300,
+    "delete_timer": 300,
+    "max_strikes": 1,
+    "link_protection": false,
+    "banned_words": [],
+    "commands": {}
 }

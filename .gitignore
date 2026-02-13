@@ -1,4 +1,4 @@
-0~# Geheime Konfiguration
+# Geheime Konfiguration (NIEMALS HOCHLADEN)
 config.json
 
 # Datenbanken und Logs (Userdaten!)
@@ -6,8 +6,9 @@ banned_log.json
 cmd_log.json
 known_users.json
 warnings.json
+stats.json
 
-# Python Systemdateien (Müll)
+# Python Müll
 __pycache__/
 *.pyc
 venv/

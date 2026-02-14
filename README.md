@@ -138,4 +138,6 @@ Timer für das automatische Löschen einstellen.
 ☕ Support
 Gefällt dir das Projekt? Ich freue mich über einen Kaffee!
 
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/kodimanhimself)
+
 Lizenz: MIT License | Developer: Kodiman_Himself

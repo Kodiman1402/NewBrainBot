@@ -1,14 +1,15 @@
-# Geheime Konfiguration (NIEMALS HOCHLADEN)
+# 1. Geheime Konfiguration (NIEMALS HOCHLADEN!)
 config.json
 
-# Datenbanken und Logs (Userdaten!)
+# 2. Deine privaten User-Datenbanken & Logs
 banned_log.json
 cmd_log.json
 known_users.json
 warnings.json
 stats.json
+karma.json
 
-# Python Müll
+# 3. Python Müll und Cache (braucht GitHub nicht)
 __pycache__/
 *.pyc
 venv/

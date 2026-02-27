@@ -6,8 +6,16 @@
     "welcome_message": "Willkommen im Chat!",
     "welcome_timer": 300,
     "delete_timer": 300,
-    "max_strikes": 1,
+    "max_strikes": 3,
     "link_protection": false,
     "banned_words": [],
-    "commands": {}
+    "commands": {},
+    "captcha_active": false,
+    "news_active": false,
+    "news_message": "Deine News hier...",
+    "news_interval": 12,
+    "news_last_sent": 0,
+    "nightmode_active": false,
+    "nightmode_start": "23:00",
+    "nightmode_end": "07:00"
 }

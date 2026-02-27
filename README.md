@@ -1,141 +1,150 @@
-Markdown
-# 🧠 NEW BRAIN BOT (v6.1)
+# 🧠 NEW BRAIN BOT (v8.0 - Ultimate Admin)
 
 **Created by Kodiman_Himself**
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/kodimanhimself)
 
-Ein mächtiger, moderner Telegram Admin-Bot mit Web-Dashboard zur Verwaltung von Communities. Entwickelt für Linux-Server (Proxmox, VPS, Raspberry Pi).
+Ein mächtiger, moderner Telegram Admin-Bot mit Web-Dashboard zur Verwaltung von Communities. Entwickelt für Linux-Server (Proxmox LXC, VPS, Raspberry Pi, Debian/Ubuntu).
 
 ---
 
-## ✨ Features (v6.1)
+## ✨ Features (v8.0)
 
-* **📊 Statistik-Dashboard:** Live-Übersicht über Nachrichtenaktivität, Top-User und tägliche Statistiken.
-* **🛡️ Link-Schutz:** Löscht automatisch Links von Nicht-Admins (konfigurierbar und ein/ausschaltbar).
-* **⚖️ Strike-System:** Verwarnungen statt sofortigem Bann. Einstellbar von 1 (Sofortbann) bis 10 Verwarnungen.
-* **⚡ Admin-Tools:** Bannen (mit Nachrichtenlöschung), Entbannen und Kicken direkt über Telegram oder das Web-Interface.
-* **🧹 Auto-Clean:** Der Bot hält den Chat sauber und löscht Befehle sowie seine eigenen Antworten automatisch nach X Sekunden.
-* **🖥️ Web-Interface:** Steuere alles bequem über den Browser (Streamlit).
-* **📝 Befehls-Editor:** Erstelle eigene Befehle (z.B. `/regeln`) direkt im Dashboard.
+* **🤖 Anti-Bot Captcha:** Neue User müssen einen Button klicken, um zu beweisen, dass sie Menschen sind (sonst erfolgt ein stummer Kick nach 2 Min).
+* **🌟 Gamification & Karma:** Level-Up System bei Nachrichten-Meilensteinen. User können sich mit `+1` oder `Danke` Karma geben (`/karma` Ranking).
+* **📊 Statistik & Leaderboard:** Live-Übersicht im Dashboard und Top-Chatter Ranking per Befehl (`/top`).
+* **⏳ Timeout-Strikes:** Bevor ein User gebannt wird, erhält er bei Warnungen (z.B. Blacklist-Wörter) automatische 24h-Stummschaltungen zur Abkühlung.
+* **🌙 Nachtruhe-Modus:** Sperrt den Chat nachts automatisch für alle normalen User (Zeiten frei wählbar).
+* **📢 Auto News-Ticker:** Sendet vollautomatisch in festgelegten Intervallen deine News, Links oder Werbung in die Gruppe.
+* **🛡️ Link-Schutz:** Löscht automatisch Links von Nicht-Admins.
+* **🖥️ Web-Interface:** Steuere alles, inklusive Blacklist und Custom-Commands, bequem über den Browser (Streamlit).
 
 ---
 
-## 🚀 Installation auf einem Linux Server
+## 🚀 Detaillierte Installation (Linux Server)
 
-Diese Anleitung wurde für **Debian/Ubuntu** (und Proxmox LXC) geschrieben.
+Diese Anleitung führt dich Schritt für Schritt durch die Installation auf einem frischen Linux-System (Debian/Ubuntu). Es wird vorausgesetzt, dass du als `root` User angemeldet bist.
 
-### 1. Vorbereitung
-Stelle sicher, dass Git und Python installiert sind:
+### 1. System aktualisieren & Pakete installieren
+Zuerst bringen wir das System auf den neuesten Stand und installieren Git sowie Python3.
 ```bash
 apt update && apt upgrade -y
-apt install git python3 python3-pip python3-venv -y
-2. Repository klonen
-Lade den Bot auf deinen Server:
+apt install git python3 python3-pip python3-venv nano -y
+```
 
-Bash
+### 2. Repository klonen
+Wir laden den Code von GitHub herunter und wechseln in das Verzeichnis. Der Ordner wird `/root/new_brain` heißen.
+```bash
 cd /root/
-git clone [https://github.com/Kodiman1402/NewBrainBot.git](https://github.com/Kodiman1402/NewBrainBot.git)
-cd NewBrainBot
-3. Virtuelle Umgebung erstellen
-Wir isolieren den Bot, damit das System sauber bleibt:
+git clone [https://github.com/Kodiman1402/NewBrainBot.git](https://github.com/Kodiman1402/NewBrainBot.git) new_brain
+cd new_brain
+```
 
-Bash
+### 3. Virtuelle Umgebung (venv) einrichten
+Um Konflikte mit anderen System-Paketen zu vermeiden, erstellen wir eine isolierte Python-Umgebung für den Bot.
+```bash
 python3 -m venv venv
 source venv/bin/activate
-4. Abhängigkeiten installieren
-Bash
+```
+*(Dein Terminal-Prompt sollte nun mit `(venv)` beginnen).*
+
+### 4. Abhängigkeiten installieren
+Jetzt installieren wir die benötigten Python-Bibliotheken (Telegram-API, Streamlit fürs Dashboard etc.).
+```bash
 pip install -r requirements.txt
-⚙️ Konfiguration
-Konfigurationsdatei erstellen:
-Benenne die Beispiel-Konfiguration um, damit du sie bearbeiten kannst:
+```
 
-Bash
-mv config_sample.json config.json
-Daten eintragen:
-Du kannst die Datei entweder jetzt im Terminal bearbeiten (nano config.json) ODER später bequem über das Web-Dashboard eingeben.
+### 5. Konfiguration vorbereiten
+Wir kopieren die Muster-Konfigurationsdatei, damit der Bot seine Datenbank anlegen kann.
+```bash
+cp config_sample.json config.json
+```
+*(Hinweis: Du musst die `config.json` nicht manuell bearbeiten. Du kannst den Bot Token und deine Admin-ID später bequem über das Web-Dashboard eintragen!)*
 
-Bot Token: Bekommst du von @BotFather.
+---
 
-Admin ID: Deine eigene Telegram-ID (der Bot verrät sie dir später mit dem Befehl /id).
+## 🤖 Autostart einrichten (Systemd Services)
 
-🤖 Autostart einrichten (Systemd Services)
-Damit der Bot und das Dashboard auch weiterlaufen, wenn du das Terminal schließt (oder der Server neu startet), richten wir Systemd-Services ein.
+Damit der Bot und das Dashboard dauerhaft im Hintergrund laufen und nach einem Server-Neustart automatisch wieder anspringen, richten wir zwei Dienste ein.
 
-Hinweis: Diese Pfade gehen davon aus, dass der Bot in /root/NewBrainBot liegt. Passe sie an, falls du einen anderen Ordner nutzt.
-
-1. Bot Service erstellen
-Erstelle die Datei:
-
-Bash
+### 1. Bot Service erstellen
+```bash
 nano /etc/systemd/system/newbrain-bot.service
-Füge folgenden Inhalt ein:
-
-Ini, TOML
+```
+Füge folgenden Inhalt ein (Speichern mit `STRG+O`, `Enter`, Schließen mit `STRG+X`):
+```ini
 [Unit]
 Description=New Brain Telegram Bot
 After=network.target
 
 [Service]
 User=root
-WorkingDirectory=/root/NewBrainBot
-ExecStart=/root/NewBrainBot/venv/bin/python3 bot.py
+WorkingDirectory=/root/new_brain
+ExecStart=/root/new_brain/venv/bin/python3 bot.py
 Restart=always
+RestartSec=10
 
 [Install]
 WantedBy=multi-user.target
-2. Dashboard Service erstellen
-Erstelle die Datei:
+```
 
-Bash
+### 2. Dashboard Service erstellen
+```bash
 nano /etc/systemd/system/newbrain-gui.service
+```
 Füge folgenden Inhalt ein:
-
-Ini, TOML
+```ini
 [Unit]
 Description=New Brain Web Dashboard
 After=network.target
 
 [Service]
 User=root
-WorkingDirectory=/root/NewBrainBot
-ExecStart=/root/NewBrainBot/venv/bin/streamlit run dashboard.py --server.port 8501
+WorkingDirectory=/root/new_brain
+ExecStart=/root/new_brain/venv/bin/streamlit run dashboard.py --server.port 8501
 Restart=always
+RestartSec=10
 
 [Install]
 WantedBy=multi-user.target
-3. Services aktivieren und starten
-Bash
+```
+
+### 3. Services aktivieren und starten
+Jetzt sagen wir dem System, dass es diese neuen Dienste laden und starten soll:
+```bash
 systemctl daemon-reload
 systemctl enable newbrain-bot
 systemctl enable newbrain-gui
 systemctl start newbrain-bot
 systemctl start newbrain-gui
-🎮 Benutzung
-Telegram Befehle
-/id - Zeigt deine ID oder die ID des Nutzers, auf den du antwortest (wichtig für die Einrichtung).
+```
 
-/ban - (Als Antwort auf eine Nachricht) Bannt den User sofort und löscht alle seine Nachrichten der letzten 48 Stunden.
+---
 
-Eigene Befehle - Du kannst im Dashboard beliebige Befehle (z.B. /hilfe, /regeln, /spenden) anlegen.
+## 🌍 Firewall & Zugriff (WICHTIG)
 
-Web Dashboard
-Öffne deinen Browser und gehe zu:
-http://DEINE-SERVER-IP:8501
+Das Web-Dashboard läuft auf Port **8501**. Wenn du eine Firewall (wie `ufw`) aktiv hast, musst du diesen Port freigeben:
+```bash
+ufw allow 8501/tcp
+```
 
-Hier kannst du:
+Öffne nun deinen Browser und rufe das Dashboard auf:
+👉 **`http://<DEINE-SERVER-IP>:8501`**
 
-Im Tab "Setup" (Sidebar) deinen Token und deine Admin-ID speichern.
+Dort gehst du links in der Sidebar auf **Setup** und trägst deinen Telegram Bot Token (von [@BotFather](https://t.me/BotFather)) und deine Telegram User-ID ein.
 
-Statistiken einsehen.
+---
 
-Den Link-Schutz aktivieren/deaktivieren.
+## 🎮 Benutzung & Wichtige Befehle
 
-User manuell bannen.
+**Für Administratoren:**
+* **Bot-Rechte:** Stelle sicher, dass der Bot in deiner Telegram-Gruppe als Administrator hinzugefügt wurde und zwingend das Recht **"Nachrichten löschen"** sowie **"Benutzer sperren"** hat!
+* `/ban` - Antworte auf die Nachricht eines Users mit `/ban`, um ihn sofort zu bannen und seine letzten Nachrichten zu löschen.
 
-Timer für das automatische Löschen einstellen.
+**Für User (Gamification):**
+* `/top` oder `/ranking` - Zeigt die 5 aktivsten User (Nachrichten).
+* `/karma` oder `/ehrenmann` - Zeigt die 5 User mit dem meisten Karma.
+* `+1`, `Danke`, `👍` - Als Antwort auf eine hilfreiche Nachricht schreiben, um dem Helfer Karma zu geben.
 
-☕ Support
-Gefällt dir das Projekt? Ich freue mich über einen Kaffee!
-
-Lizenz: MIT License | Developer: Kodiman_Himself
+---
+**Lizenz:** MIT License | **Developer:** Kodiman_Himself

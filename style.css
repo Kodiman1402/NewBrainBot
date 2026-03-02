@@ -188,3 +188,36 @@ footer {
     0%, 100% { opacity: 1; }
     50% { opacity: 0; }
 }
+
+/* --- PROFILBILD --- */
+.profile-container {
+    margin-bottom: 2rem; /* Abstand zum Namen */
+    display: flex;
+    justify-content: center; /* Zentriert das Bild */
+}
+
+.cyber-avatar {
+    width: 150px;
+    height: 150px;
+    object-fit: cover; /* Verhindert, dass dein Bild gestaucht oder verzerrt wird */
+    
+    /* Der Cyberpunk-Rahmen */
+    border: 3px solid var(--neon-blue);
+    
+    /* Der Sci-Fi-Schnitt an den Ecken */
+    clip-path: polygon(20px 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%, 0 20px);
+    
+    /* Das Neon-Leuchten */
+    filter: drop-shadow(0 0 10px var(--neon-blue));
+    
+    /* Weicher Übergang für den Hover-Effekt */
+    transition: all 0.4s ease-in-out;
+}
+
+/* Was passiert, wenn man mit der Maus über das Bild fährt (Hover) */
+.cyber-avatar:hover {
+    border-color: var(--neon-pink);
+    filter: drop-shadow(0 0 20px var(--neon-pink));
+    transform: scale(1.05); /* Das Bild wird minimal größer */
+    cursor: pointer;
+}

@@ -221,3 +221,15 @@ footer {
     transform: scale(1.05); /* Das Bild wird minimal größer */
     cursor: pointer;
 }
+
+/* --- PROJEKT-LINKS --- */
+.cyber-link {
+    color: var(--text-color); /* Normale Textfarbe */
+    text-decoration: none; /* Entfernt den standardmäßigen Unterstrich */
+    transition: all 0.3s ease; /* Weicher Übergang beim Hovern */
+}
+
+.cyber-link:hover {
+    color: var(--neon-blue); /* Wechselt die Farbe zu Neon-Blau */
+    text-shadow: 0 0 8px var(--neon-blue); /* Lässt den Text leuchten */
+}

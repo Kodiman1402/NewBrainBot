@@ -224,3 +224,119 @@ footer {
     color: var(--neon-pink); /* Beim Drüberfahren mit der Maus wird der Link Neon-Pink */
     text-shadow: 0 0 8px var(--neon-pink);
 }
+
+/* --- SKILLS & LADEBALKEN --- */
+.skills-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.skill {
+    display: flex;
+    align-items: center;
+}
+
+.skill-name {
+    width: 120px;
+    color: var(--neon-yellow);
+    font-weight: bold;
+}
+
+.skill-bar {
+    flex-grow: 1; /* Nimmt den restlichen Platz ein */
+    height: 15px;
+    background-color: #050505;
+    border: 1px solid #333;
+    margin: 0 1rem;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Die Animation, die den Balken füllt */
+.skill-level {
+    height: 100%;
+    background-color: var(--neon-blue);
+    box-shadow: 0 0 10px var(--neon-blue);
+    /* Der Balken wächst von 0 auf seine angegebene Breite */
+    animation: fillBar 1.5s ease-out forwards;
+    transform-origin: left;
+    transform: scaleX(0);
+}
+
+@keyframes fillBar {
+    to { transform: scaleX(1); }
+}
+
+.skill-percent {
+    width: 40px;
+    text-align: right;
+    color: var(--text-color);
+}
+
+/* --- KONTAKTFORMULAR --- */
+.cyber-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.input-group label {
+    color: var(--neon-pink);
+}
+
+.input-group input, .input-group textarea {
+    background-color: #050505;
+    border: 1px solid #333;
+    color: var(--neon-blue);
+    padding: 12px;
+    font-family: var(--font-main);
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+/* Wenn man in das Textfeld klickt, leuchtet es auf */
+.input-group input:focus, .input-group textarea:focus {
+    border-color: var(--neon-blue);
+    box-shadow: 0 0 10px rgba(0, 243, 255, 0.3);
+}
+
+.btn-submit {
+    border-color: var(--neon-blue);
+    color: var(--neon-blue);
+    align-self: flex-start; /* Button klebt links statt sich über die ganze Breite zu ziehen */
+}
+
+.btn-submit:hover {
+    background-color: var(--neon-blue);
+    color: var(--bg-color);
+    box-shadow: 0 0 15px var(--neon-blue);
+}
+
+/* --- SOCIAL ICONS --- */
+.social-links {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-bottom: 1.5rem;
+}
+
+.social-icon {
+    color: var(--text-color);
+    font-size: 2rem; /* Macht die Icons schön groß */
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.social-icon:hover {
+    color: var(--neon-yellow);
+    text-shadow: 0 0 15px var(--neon-yellow);
+    transform: translateY(-5px); /* Die Icons hüpfen leicht nach oben */
+}

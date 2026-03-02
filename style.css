@@ -1,0 +1,127 @@
+/* --- VARIABLEN --- */
+/* Hier kannst du deine Neon-Farben ganz leicht anpassen */
+:root {
+    --bg-color: #050505;        /* Sehr dunkles Grau, fast Schwarz */
+    --neon-blue: #00f3ff;       /* Cyberpunk Cyan/Blau */
+    --neon-pink: #ff003c;       /* Cyberpunk Neon-Pink */
+    --neon-yellow: #fcee0a;     /* Cyberpunk Gelb */
+    --text-color: #e0e0e0;      /* Helles Grau für normale Texte */
+    --font-main: 'Share Tech Mono', monospace; /* Hacker-Schriftart */
+    --font-heading: 'Orbitron', sans-serif;    /* Futuristische Überschriften */
+}
+
+/* --- GRUNDEINSTELLUNGEN --- */
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: var(--font-main);
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+    overflow-x: hidden; /* Verhindert seitliches Scrollen bei Effekten */
+}
+
+/* Hintergrund-Effekt: Alte Röhrenmonitore (Scanlines) */
+.scanlines {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+    background-size: 100% 2px, 3px 100%;
+    pointer-events: none; /* Klicks gehen durch diesen Layer hindurch */
+    z-index: 100;
+}
+
+/* --- HEADER & GLITCH EFFEKT --- */
+header {
+    text-align: center;
+    padding: 4rem 1rem 2rem 1rem;
+    border-bottom: 2px solid var(--neon-pink);
+    box-shadow: 0 5px 15px rgba(255, 0, 60, 0.2); /* Rosa Leuchten unter dem Header */
+}
+
+.glitch {
+    font-family: var(--font-heading);
+    font-size: 3rem;
+    color: var(--neon-blue);
+    text-transform: uppercase;
+    position: relative;
+    display: inline-block;
+    /* Neon-Leuchten für den Text */
+    text-shadow: 0 0 10px var(--neon-blue), 0 0 20px var(--neon-blue);
+    margin-bottom: 0.5rem;
+}
+
+.subtitle {
+    color: var(--neon-yellow);
+    font-size: 1.2rem;
+    letter-spacing: 2px;
+}
+
+/* --- INHALTSBEREICH (KARTEN) --- */
+.container {
+    max-width: 800px;
+    margin: 3rem auto;
+    padding: 0 1rem;
+}
+
+.cyber-card {
+    background: #111;
+    border: 1px solid var(--neon-blue);
+    padding: 2rem;
+    margin-bottom: 2rem;
+    position: relative;
+    /* Kasten-Leuchten (Neon-Rahmen) */
+    box-shadow: 0 0 10px rgba(0, 243, 255, 0.3), inset 0 0 15px rgba(0, 243, 255, 0.1);
+}
+
+/* Ein kleines Deko-Element an der oberen linken Ecke der Karte */
+.cyber-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 20px; height: 20px;
+    border-top: 3px solid var(--neon-blue);
+    border-left: 3px solid var(--neon-blue);
+}
+
+h2 {
+    font-family: var(--font-heading);
+    color: var(--neon-pink);
+    border-bottom: 1px dashed var(--neon-pink);
+    padding-bottom: 0.5rem;
+    text-shadow: 0 0 8px var(--neon-pink);
+}
+
+.project-list {
+    list-style: none;
+    padding: 0;
+}
+
+.project-list li {
+    margin-bottom: 1rem;
+    padding-left: 1.5rem;
+    position: relative;
+}
+
+/* Eigene Aufzählungszeichen (ein blinkendes Viereck) */
+.project-list li::before {
+    content: '>';
+    position: absolute;
+    left: 0;
+    color: var(--neon-yellow);
+    font-weight: bold;
+}
+
+.highlight {
+    color: var(--neon-blue);
+    font-weight: bold;
+}
+
+/* --- FOOTER --- */
+footer {
+    text-align: center;
+    padding: 2rem;
+    color: #666;
+    border-top: 1px solid #333;
+    font-size: 0.9rem;
+}

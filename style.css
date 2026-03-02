@@ -125,3 +125,66 @@ footer {
     border-top: 1px solid #333;
     font-size: 0.9rem;
 }
+
+/* --- BUTTONS & SUPPORT --- */
+.button-container {
+    display: flex;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+    flex-wrap: wrap; /* Bricht um, falls der Handybildschirm zu schmal ist */
+}
+
+/* Grunddesign für beide Buttons */
+.cyber-button {
+    display: inline-block;
+    padding: 10px 20px;
+    font-family: var(--font-main);
+    font-size: 1rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    text-decoration: none;
+    background-color: transparent;
+    border: 2px solid;
+    position: relative;
+    transition: all 0.3s ease; /* Weicher Übergang beim Hovern */
+    cursor: pointer;
+}
+
+/* Spezifisches Design für den Ko-Fi Button (Pink) */
+.btn-kofi {
+    border-color: var(--neon-pink);
+    color: var(--neon-pink);
+    box-shadow: 0 0 5px var(--neon-pink), inset 0 0 5px var(--neon-pink);
+}
+
+.btn-kofi:hover {
+    background-color: var(--neon-pink);
+    color: var(--bg-color);
+    box-shadow: 0 0 15px var(--neon-pink), inset 0 0 10px var(--neon-pink);
+}
+
+/* Spezifisches Design für den PayPal Button (Blau) */
+.btn-paypal {
+    border-color: var(--neon-blue);
+    color: var(--neon-blue);
+    box-shadow: 0 0 5px var(--neon-blue), inset 0 0 5px var(--neon-blue);
+}
+
+.btn-paypal:hover {
+    background-color: var(--neon-blue);
+    color: var(--bg-color);
+    box-shadow: 0 0 15px var(--neon-blue), inset 0 0 10px var(--neon-blue);
+}
+
+/* --- JAVASCRIPT EFFEKTE --- */
+/* Das ist der blinkende Unterstrich am Ende des Textes */
+.cursor::after {
+    content: '_';
+    animation: blink 1s step-end infinite;
+}
+
+/* Animation für das Blinken */
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}

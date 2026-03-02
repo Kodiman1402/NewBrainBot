@@ -1,4 +1,4 @@
-# 🧠 NEW BRAIN BOT (v8.0 - Ultimate Admin)
+# 🧠 NEW BRAIN BOT (v9.0 - Ultimate Admin)
 
 **Created by Kodiman_Himself**
 
@@ -8,7 +8,7 @@ Ein mächtiger, moderner Telegram Admin-Bot mit Web-Dashboard zur Verwaltung von
 
 ---
 
-## ✨ Features (v8.0)
+## ✨ Features (v9.0)
 
 * **🤖 Anti-Bot Captcha:** Neue User müssen einen Button klicken, um zu beweisen, dass sie Menschen sind (sonst erfolgt ein stummer Kick nach 2 Min).
 * **🌟 Gamification & Karma:** Level-Up System bei Nachrichten-Meilensteinen. User können sich mit `+1` oder `Danke` Karma geben (`/karma` Ranking).

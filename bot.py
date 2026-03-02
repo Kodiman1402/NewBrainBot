@@ -1,7 +1,6 @@
 # ---------------------------------------------------------
-# NEW BRAIN BOT - V8 (THE ULTIMATE ADMIN UPDATE)
+# NEW BRAIN BOT - V9.0 (STABILITY & BUGFIX UPDATE)
 # Created by: Kodiman_Himself
-# Bugfixes applied
 # ---------------------------------------------------------
 
 import logging
@@ -15,7 +14,7 @@ from telegram.ext import Application, MessageHandler, filters, ContextTypes, Cal
 
 # Logging
 logging.basicConfig(
-    format='%(asctime)s - NEW BRAIN V8 - %(levelname)s - %(message)s',
+    format='%(asctime)s - NEW BRAIN V9.0 - %(levelname)s - %(message)s',
     level=logging.INFO
 )
 logger = logging.getLogger(__name__)
@@ -43,6 +42,10 @@ def load_json(file_path):
 
 def save_json(file_path, data):
     with open(file_path, 'w', encoding='utf-8') as f: json.dump(data, f, indent=4)
+
+def clean_md(text):
+    """Sichert Text für Telegram Markdown ab (verhindert Abstürze durch Sonderzeichen im Namen)"""
+    return str(text).replace('_', '\\_').replace('*', '\\*').replace('`', '\\`').replace('[', '\\[')
 
 def update_known_user(user):
     users = load_json(USER_DB_FILE)
@@ -187,7 +190,7 @@ async def handle_dynamic_commands(update: Update, context: ContextTypes.DEFAULT_
     if command_trigger == "id":
         if update.message.reply_to_message:
             target = update.message.reply_to_message.from_user
-            msg = await update.message.reply_text(f"👤 User: {target.first_name}\n🆔 ID: `{target.id}`", parse_mode='Markdown')
+            msg = await update.message.reply_text(f"👤 User: {clean_md(target.first_name)}\n🆔 ID: `{target.id}`", parse_mode='Markdown')
         else:
             msg = await update.message.reply_text(f"Deine ID: `{user.id}`\nGruppe ID: `{chat.id}`", parse_mode='Markdown')
         log_command_id(chat.id, msg.message_id)
@@ -221,10 +224,12 @@ async def handle_dynamic_commands(update: Update, context: ContextTypes.DEFAULT_
         text_lines = ["🏆 **KODIMANS TOP CHATTER** 🏆\n"]
         for i, (uid, count) in enumerate(sorted_users):
             short_name = known_users.get(uid, f"User {uid}").split(" (@")[0]
-            text_lines.append(f"{medals[i]} **{short_name}** ({count} Nachrichten)")
-        top_msg = await update.message.reply_text("\n".join(text_lines), parse_mode='Markdown')
-        log_command_id(chat.id, top_msg.message_id)
-        asyncio.create_task(delete_later(top_msg, timer))
+            text_lines.append(f"{medals[i]} **{clean_md(short_name)}** ({count} Nachrichten)")
+        try:
+            top_msg = await update.message.reply_text("\n".join(text_lines), parse_mode='Markdown')
+            log_command_id(chat.id, top_msg.message_id)
+            asyncio.create_task(delete_later(top_msg, timer))
+        except Exception as e: logger.error(f"Top Error: {e}")
         return
 
     if command_trigger in ["karma", "ehrenmann"]:
@@ -238,10 +243,12 @@ async def handle_dynamic_commands(update: Update, context: ContextTypes.DEFAULT_
         text_lines = ["🌟 **KODIMANS KARMA RANKING** 🌟\n"]
         for i, (uid, count) in enumerate(sorted_karma):
             short_name = known_users.get(uid, f"User {uid}").split(" (@")[0]
-            text_lines.append(f"{i+1}. **{short_name}** ({count} Karma-Punkte)")
-        k_msg = await update.message.reply_text("\n".join(text_lines), parse_mode='Markdown')
-        log_command_id(chat.id, k_msg.message_id)
-        asyncio.create_task(delete_later(k_msg, timer))
+            text_lines.append(f"{i+1}. **{clean_md(short_name)}** ({count} Karma-Punkte)")
+        try:
+            k_msg = await update.message.reply_text("\n".join(text_lines), parse_mode='Markdown')
+            log_command_id(chat.id, k_msg.message_id)
+            asyncio.create_task(delete_later(k_msg, timer))
+        except Exception as e: logger.error(f"Karma Error: {e}")
         return
 
     commands_dict = config.get('commands', {})
@@ -295,7 +302,7 @@ async def monitor_chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
     update_known_user(user)
     config = load_json(CONFIG_FILE)
     
-    # NACHTRUHE CHECK (Mit Absturz-Schutz)
+    # NACHTRUHE CHECK
     if config.get("nightmode_active", False):
         now = datetime.now().time()
         try:
@@ -312,7 +319,7 @@ async def monitor_chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     try:
                         await update.message.delete()
                     except: pass
-                    return # Sofort abbrechen
+                    return 
         except Exception as e: logger.error(f"Nightmode Error: {e}")
 
     # LEVEL UP SYSTEM
@@ -320,13 +327,13 @@ async def monitor_chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
     RANKS = {10: "Neuling 🌱", 50: "Plaudertasche 💬", 100: "Stammgast 🌟", 250: "Schreibmaschine ⌨️", 500: "Chat-Legende 👑", 1000: "Gottgleicher Tipper ⚡"}
     if msg_count in RANKS:
         try:
-            lvl_msg = await chat.send_message(f"🎉 **LEVEL UP!** 🎉\nGlückwunsch {user.first_name}! Du hast gerade deine **{msg_count}. Nachricht** geschrieben.\nDein neuer Rang ist: **{RANKS[msg_count]}**", parse_mode='Markdown')
+            lvl_msg = await chat.send_message(f"🎉 **LEVEL UP!** 🎉\nGlückwunsch {clean_md(user.first_name)}! Du hast gerade deine **{msg_count}. Nachricht** geschrieben.\nDein neuer Rang ist: **{RANKS[msg_count]}**", parse_mode='Markdown')
             asyncio.create_task(delete_later(lvl_msg, 60))
         except: pass
 
     text = update.message.text.lower()
     
-    # KARMA SYSTEM (Gefixt auf bessere String-Erkennung)
+    # KARMA SYSTEM
     karma_triggers = ["+1", "danke", "thx", "thanks", "👍", "ehrenmann"]
     if update.message.reply_to_message and any(w in text for w in karma_triggers):
         target = update.message.reply_to_message.from_user
@@ -364,13 +371,11 @@ async def monitor_chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 await update.message.delete()
                 strikes = add_warning(user.id)
                 
-                # TIMEOUT LOGIC (Gefixt auf TimeDelta wegen Zeitzonen)
                 if strikes == max_strikes - 1 and max_strikes > 1:
                     await chat.restrict_member(user.id, ChatPermissions(can_send_messages=False), until_date=timedelta(hours=24))
-                    warn_msg = await chat.send_message(f"⚠️ {user.first_name}, das Wort '{word}' ist verboten! (Strike {strikes}/{max_strikes})\nDu wurdest zur Abkühlung für **24 Stunden stummgeschaltet**.", parse_mode='Markdown')
+                    warn_msg = await chat.send_message(f"⚠️ {clean_md(user.first_name)}, das Wort '{word}' ist verboten! (Strike {strikes}/{max_strikes})\nDu wurdest zur Abkühlung für **24 Stunden stummgeschaltet**.", parse_mode='Markdown')
                     asyncio.create_task(delete_later(warn_msg, 60))
                 
-                # BAN LOGIC
                 elif strikes >= max_strikes:
                     await chat.ban_member(user.id, revoke_messages=True)
                     log_ban(user.id, user.first_name, chat.id, chat.title, f"{word} (Strike {strikes}/{max_strikes})")
@@ -378,7 +383,6 @@ async def monitor_chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     ban_msg = await chat.send_message(f"⛔ {user.first_name} wurde permanent gebannt! (Limit erreicht)")
                     asyncio.create_task(delete_later(ban_msg, 60))
                 
-                # NORMAL WARN LOGIC
                 else:
                     warn_msg = await chat.send_message(f"⚠️ {user.first_name}, das Wort '{word}' ist verboten! ({strikes}/{max_strikes})")
                     asyncio.create_task(delete_later(warn_msg, 30))

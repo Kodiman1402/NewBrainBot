@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kodiman_Himself | Cyberpunk Portfolio</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -14,15 +15,40 @@
         <div class="profile-container">
             <img src="profilbild.jpg" alt="Avatar von Kodiman_Himself" class="cyber-avatar">
         </div>
-
         <h1 class="glitch" data-text="Kodiman_Himself">Kodiman_Himself</h1>
         <p class="subtitle" id="typewriter" data-text="Netrunner // Software-Entwickler // Cyber-Enthusiast"></p>
     </header>
 
     <main class="container">
         <section class="cyber-card">
-            <h2>SYSTEM.LOG("Über mich");</h2>
+            <h2>SYSTEM.LOG("Über_mich");</h2>
             <p>Willkommen im Mainframe. Ich bin Kodiman_Himself. Ich schreibe Code, baue Netzwerke auf und navigiere durch den Cyberspace. Dies ist mein persönliches Terminal auf GitHub Pages.</p>
+        </section>
+
+        <section class="cyber-card">
+            <h2>SYSTEM.ANALYZE("Fähigkeiten");</h2>
+            <div class="skills-container">
+                <div class="skill">
+                    <span class="skill-name">Python</span>
+                    <div class="skill-bar"><div class="skill-level" style="width: 85%;"></div></div>
+                    <span class="skill-percent">85%</span>
+                </div>
+                <div class="skill">
+                    <span class="skill-name">HTML/CSS</span>
+                    <div class="skill-bar"><div class="skill-level" style="width: 70%;"></div></div>
+                    <span class="skill-percent">70%</span>
+                </div>
+                <div class="skill">
+                    <span class="skill-name">Linux/Bash</span>
+                    <div class="skill-bar"><div class="skill-level" style="width: 90%;"></div></div>
+                    <span class="skill-percent">90%</span>
+                </div>
+                <div class="skill">
+                    <span class="skill-name">JavaScript</span>
+                    <div class="skill-bar"><div class="skill-level" style="width: 40%;"></div></div>
+                    <span class="skill-percent">40%</span>
+                </div>
+            </div>
         </section>
 
         <section class="cyber-card">
@@ -32,6 +58,27 @@
                 <li><span class="highlight">Network Restore Script:</span> <a href="https://github.com/Kodiman1402/network_restore" target="_blank" class="cyber-link">Repository öffnen</a></li>
                 <li><span class="highlight">Kodimans MacPlayer:</span> <a href="https://github.com/Kodiman1402/plugin.video.kodimans.mac.player" target="_blank" class="cyber-link">Repository öffnen</a></li>
             </ul>
+        </section>
+
+        <section class="cyber-card">
+            <h2>COMM.LINK(">_ Kontakt_aufnehmen");</h2>
+            <p>Sende eine verschlüsselte Nachricht direkt an mein Interface.</p>
+            
+            <form action="DEINE_FORMSPREE_URL_HIER" method="POST" class="cyber-form">
+                <div class="input-group">
+                    <label for="name">ID_NAME:</label>
+                    <input type="text" id="name" name="name" required placeholder="Dein Alias eingeben...">
+                </div>
+                <div class="input-group">
+                    <label for="email">CONTACT_NODE (E-Mail):</label>
+                    <input type="email" id="email" name="email" required placeholder="Deine E-Mail-Adresse...">
+                </div>
+                <div class="input-group">
+                    <label for="message">ENCRYPTED_MESSAGE:</label>
+                    <textarea id="message" name="message" rows="4" required placeholder="Nachricht hier eingeben..."></textarea>
+                </div>
+                <button type="submit" class="cyber-button btn-submit">SENDEN // EXECUTE</button>
+            </form>
         </section>
 
         <section class="cyber-card">
@@ -45,6 +92,11 @@
     </main>
 
     <footer>
+        <div class="social-links">
+            <a href="https://github.com/Kodiman1402" target="_blank" class="social-icon" title="GitHub"><i class="fab fa-github"></i></a>
+            <a href="#" target="_blank" class="social-icon" title="Telegram"><i class="fab fa-telegram"></i></a>
+            <a href="#" target="_blank" class="social-icon" title="Terminal"><i class="fas fa-terminal"></i></a>
+        </div>
         <p>CONNECTION_SECURE :: &copy; 2026 Kodiman_Himself</p>
     </footer>
 

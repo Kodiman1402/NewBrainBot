@@ -191,45 +191,36 @@ footer {
 
 /* --- PROFILBILD --- */
 .profile-container {
-    margin-bottom: 2rem; /* Abstand zum Namen */
+    margin-bottom: 2rem;
     display: flex;
-    justify-content: center; /* Zentriert das Bild */
+    justify-content: center;
 }
 
 .cyber-avatar {
     width: 150px;
     height: 150px;
-    object-fit: cover; /* Verhindert, dass dein Bild gestaucht oder verzerrt wird */
-    
-    /* Der Cyberpunk-Rahmen */
-    border: 3px solid var(--neon-blue);
-    
-    /* Der Sci-Fi-Schnitt an den Ecken */
-    clip-path: polygon(20px 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%, 0 20px);
-    
-    /* Das Neon-Leuchten */
-    filter: drop-shadow(0 0 10px var(--neon-blue));
-    
-    /* Weicher Übergang für den Hover-Effekt */
+    object-fit: cover;
+    /* Leicht abgerundete Ecken sehen modern und sauber aus. Rahmen und Clip-Path sind entfernt. */
+    border-radius: 10px; 
     transition: all 0.4s ease-in-out;
 }
 
-/* Was passiert, wenn man mit der Maus über das Bild fährt (Hover) */
 .cyber-avatar:hover {
-    border-color: var(--neon-pink);
-    filter: drop-shadow(0 0 20px var(--neon-pink));
-    transform: scale(1.05); /* Das Bild wird minimal größer */
+    transform: scale(1.05); /* Minimaler Zoom beim Drüberfahren bleibt erhalten */
     cursor: pointer;
+    /* Ein leichtes Leuchten beim Drüberfahren passt super zum Style */
+    filter: drop-shadow(0 0 15px var(--neon-blue));
 }
 
 /* --- PROJEKT-LINKS --- */
 .cyber-link {
-    color: var(--text-color); /* Normale Textfarbe */
-    text-decoration: none; /* Entfernt den standardmäßigen Unterstrich */
-    transition: all 0.3s ease; /* Weicher Übergang beim Hovern */
+    color: var(--neon-blue); /* Unser helles Neon-Cyan! Viel besser lesbar als das Standard-Dunkelblau */
+    text-decoration: none;
+    font-weight: bold;
+    transition: all 0.3s ease;
 }
 
 .cyber-link:hover {
-    color: var(--neon-blue); /* Wechselt die Farbe zu Neon-Blau */
-    text-shadow: 0 0 8px var(--neon-blue); /* Lässt den Text leuchten */
+    color: var(--neon-pink); /* Beim Drüberfahren mit der Maus wird der Link Neon-Pink */
+    text-shadow: 0 0 8px var(--neon-pink);
 }
